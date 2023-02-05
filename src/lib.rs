@@ -10,8 +10,8 @@
 
 /// 11-bit standard identifier.
 pub struct IdStandard {
-    priority: u8,
-    source_address: u8,
+    pub priority: u8,
+    pub source_address: u8,
 }
 
 impl IdStandard {
@@ -39,12 +39,12 @@ impl IdStandard {
 
 /// 29-bit extended identifier.
 pub struct IdExtended {
-    priority: u8,
-    ext_data_page: bool,
-    data_page: bool,
-    pdu_format: u8,
-    pdu_specific: u8,
-    source_address: u8,
+    pub priority: u8,
+    pub ext_data_page: bool,
+    pub data_page: bool,
+    pub pdu_format: u8,
+    pub pdu_specific: u8,
+    pub source_address: u8,
 }
 
 impl IdExtended {
