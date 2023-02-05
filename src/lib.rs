@@ -39,7 +39,7 @@ impl IdExtended {
         let pf = self.pdu_format as u32;
         let ps = self.pdu_specific as u32;
         let sa = self.source_address as u32;
-        p << 26 | edp << 25| dp << 24 | pf << 16 | ps << 8 | sa
+        p << 26 | edp << 25 | dp << 24 | pf << 16 | ps << 8 | sa
     }
 }
 
@@ -49,10 +49,10 @@ mod tests {
 
     #[test]
     fn id_standard_to_bits() {
-        // Example PGN 0xF333: High Voltage Energy Storage Pack 26 Data 1 
+        // Example PGN 0xF333: High Voltage Energy Storage Pack 26 Data 1
         let id = IdStandard {
             priority: 6,
-            source_address: 0xFE, 
+            source_address: 0xFE,
         };
         assert_eq!(id.to_bits(), 0x6FE);
     }
