@@ -5,7 +5,7 @@ authors = [
     "Liam Kinne <liam@kinne.io>"
 ]
 description = "Implementation of SAE-J1939 for both embedded and non-embedded use cases"
-categories = ["embedded", "no-std", "can-bus"]
+categories = ["embedded", "no-std"]
 documentation = "https://docs.rs/sae-j1939"
 version = "0.1.1"
 edition = "2021"
