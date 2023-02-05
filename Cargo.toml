@@ -7,7 +7,7 @@ authors = [
 description = "Implementation of SAE-J1939 for both embedded and non-embedded use cases"
 categories = ["embedded", "no-std", "can-bus"]
 documentation = "https://docs.rs/sae-j1939"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 
