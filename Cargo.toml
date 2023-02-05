@@ -1,0 +1,14 @@
+[package]
+name = "sae-j1939"
+authors = [
+    "The Team Arrow Racing Association firmware development team",
+    "Liam Kinne <liam@kinne.io>"
+]
+description = "Implementation of SAE-J1939 for both embedded and non-embedded use cases"
+categories = ["embedded", "no-std", "can-bus"]
+documentation = "https://docs.rs/sae-j1939"
+version = "0.1.0"
+edition = "2021"
+licesnse = "MIT"
+
+[dependencies]
