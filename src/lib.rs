@@ -2,7 +2,7 @@
 #![allow(dead_code)]
 
 /// 11-bit standard identifier.
-struct IdStandard {
+pub struct IdStandard {
     priority: u8,
     source_address: u8,
 }
@@ -18,7 +18,7 @@ impl IdStandard {
 }
 
 /// 29-bit extended identifier.
-struct IdExtended {
+pub struct IdExtended {
     priority: u8,
     ext_data_page: bool,
     data_page: bool,
