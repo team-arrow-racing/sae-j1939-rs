@@ -1,3 +1,10 @@
+//! Library to assist with common SAE-J1939 conversions.
+//!
+//! # Features
+//!
+//! - Standard and extended identifier types.
+//! - Conversion to and from raw bit reperesntations.
+
 #![no_std]
 #![allow(dead_code)]
 
