@@ -9,6 +9,6 @@ categories = ["embedded", "no-std", "can-bus"]
 documentation = "https://docs.rs/sae-j1939"
 version = "0.1.0"
 edition = "2021"
-licesnse = "MIT"
+license = "MIT"
 
 [dependencies]
