@@ -1,5 +1,5 @@
 [package]
-name = "sae-j1939"
+name = "j1939"
 authors = [
     "The Team Arrow Racing Association firmware development team",
     "Liam Kinne <liam@kinne.io>"
