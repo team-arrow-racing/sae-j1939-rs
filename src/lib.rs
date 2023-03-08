@@ -43,6 +43,13 @@ impl IdStandard {
     }
 }
 
+#[cfg(feature = "bxcan")]
+impl From<bxcan::StandardId> for IdStandard {
+    fn from(id: bxcan::StandardId) -> Self {
+        IdStandard::new(id.as_raw())
+    }
+}
+
 /// 29-bit extended identifier.
 pub struct IdExtended {
     pub priority: u8,
@@ -86,6 +93,13 @@ impl IdExtended {
         let ps = self.pdu_specific as u32;
         let sa = self.source_address as u32;
         p << 26 | edp << 25 | dp << 24 | pf << 16 | ps << 8 | sa
+    }
+}
+
+#[cfg(feature = "bxcan")]
+impl From<bxcan::ExtendedId> for IdExtended {
+    fn from(id: bxcan::ExtendedId) -> Self {
+        IdExtended::new(id.as_raw())
     }
 }
 
