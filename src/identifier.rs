@@ -1,19 +1,19 @@
 //! # Identifier types
 
 /// 11-bit standard identifier.
-pub struct IdStandard {
+pub struct StandardId {
     pub priority: u8,
     pub source_address: u8,
 }
 
-impl IdStandard {
+impl StandardId {
     /// Create standard identifier from raw bits.
     pub fn new(raw: u16) -> Self {
         let priority = (raw >> 8) as u8;
         assert!(priority < 8);
         let source_address = raw as u8;
 
-        IdStandard {
+        StandardId {
             priority,
             source_address,
         }
@@ -30,14 +30,14 @@ impl IdStandard {
 }
 
 #[cfg(feature = "bxcan")]
-impl From<bxcan::StandardId> for IdStandard {
+impl From<bxcan::StandardId> for StandardId {
     fn from(id: bxcan::StandardId) -> Self {
-        IdStandard::new(id.as_raw())
+        StandardId::new(id.as_raw())
     }
 }
 
 /// 29-bit extended identifier.
-pub struct IdExtended {
+pub struct ExtendedId {
     pub priority: u8,
     pub ext_data_page: bool,
     pub data_page: bool,
@@ -46,7 +46,7 @@ pub struct IdExtended {
     pub source_address: u8,
 }
 
-impl IdExtended {
+impl ExtendedId {
     /// Create extended identifier from raw bits.
     pub fn new(raw: u32) -> Self {
         let priority = (raw >> 26) as u8;
@@ -57,7 +57,7 @@ impl IdExtended {
         let pdu_specific = (raw >> 8) as u8;
         let source_address = raw as u8;
 
-        IdExtended {
+        ExtendedId {
             priority,
             ext_data_page,
             data_page,
@@ -83,9 +83,9 @@ impl IdExtended {
 }
 
 #[cfg(feature = "bxcan")]
-impl From<bxcan::ExtendedId> for IdExtended {
+impl From<bxcan::ExtendedId> for ExtendedId {
     fn from(id: bxcan::ExtendedId) -> Self {
-        IdExtended::new(id.as_raw())
+        ExtendedId::new(id.as_raw())
     }
 }
 
@@ -95,7 +95,7 @@ mod tests {
 
     #[test]
     fn bits_to_standard_id() {
-        let id = IdStandard::new(0x6FE);
+        let id = StandardId::new(0x6FE);
 
         assert_eq!(id.priority, 6);
         assert_eq!(id.source_address, 0xFE);
@@ -104,7 +104,7 @@ mod tests {
     #[test]
     fn id_standard_to_bits() {
         // Example PGN 0xF333: High Voltage Energy Storage Pack 26 Data 1
-        let id = IdStandard {
+        let id = StandardId {
             priority: 6,
             source_address: 0xFE,
         };
@@ -113,7 +113,7 @@ mod tests {
 
     #[test]
     fn bits_to_extended_id() {
-        let id = IdExtended::new(0x0CF004FE);
+        let id = ExtendedId::new(0x0CF004FE);
 
         assert_eq!(id.priority, 3);
         assert_eq!(id.ext_data_page, false);
@@ -126,7 +126,7 @@ mod tests {
     #[test]
     fn id_extended_to_bits() {
         // Example PGN 0xF004: Electronic Engine Controller 1
-        let id = IdExtended {
+        let id = ExtendedId {
             priority: 3,
             ext_data_page: false,
             data_page: false,
@@ -137,7 +137,7 @@ mod tests {
         assert_eq!(id.to_bits(), 0x0CF004FE);
 
         // Example PGN 0xF122: DC/DC Converter 4 Control
-        let id = IdExtended {
+        let id = ExtendedId {
             priority: 6,
             ext_data_page: false,
             data_page: false,
