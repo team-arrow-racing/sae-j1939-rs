@@ -100,7 +100,7 @@ mod tests {
         assert_eq!(id.priority, 6);
         assert_eq!(id.source_address, 0xFE);
     }
-    
+
     #[test]
     fn id_standard_to_bits() {
         // Example PGN 0xF333: High Voltage Energy Storage Pack 26 Data 1

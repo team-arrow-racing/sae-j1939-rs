@@ -9,11 +9,10 @@
 #![no_std]
 #![allow(dead_code)]
 
-mod pdu;
-pub use crate::pdu::*;
-
-mod value;
-pub use crate::value::*;
-
 mod identifier;
+mod pdu;
+mod value;
+
 pub use crate::identifier::*;
+pub use crate::pdu::*;
+pub use crate::value::*;

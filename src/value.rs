@@ -1,7 +1,7 @@
 //! # Value types
 
 /// Transmitted values for discrete parameters (i.e. measured).
-/// 
+///
 /// Reference: SAE J1939-71 Table 2.
 #[derive(Default, Copy, Clone)]
 pub enum ParameterValue {
@@ -13,7 +13,7 @@ pub enum ParameterValue {
 }
 
 /// Transmitted values for control commands (i.e. status).
-/// 
+///
 /// Reference: SAE J1939-71 Table 2.
 #[derive(Default, Copy, Clone)]
 pub enum ControlValue {
