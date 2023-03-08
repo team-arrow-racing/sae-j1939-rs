@@ -4,6 +4,7 @@
 //!
 //! - Standard and extended identifier types.
 //! - Conversion to and from raw bit reperesntations.
+//! - STM32 `bxcan` interop support.
 
 #![no_std]
 #![allow(dead_code)]
