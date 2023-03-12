@@ -1,9 +1,13 @@
 //! # Identifier types
 
+use crate::ParameterGroupNumber;
+
 /// 11-bit standard identifier.
 pub struct StandardId {
-    pub priority: u8,
+    /// Source address
     pub source_address: u8,
+    /// Message priority
+    pub priority: u8,
 }
 
 impl StandardId {
@@ -14,8 +18,8 @@ impl StandardId {
         let source_address = raw as u8;
 
         StandardId {
-            priority,
             source_address,
+            priority,
         }
     }
 
@@ -25,6 +29,7 @@ impl StandardId {
 
         let p = self.priority as u16;
         let sa = self.source_address as u16;
+
         p << 8 | sa
     }
 }
@@ -38,12 +43,12 @@ impl From<bxcan::StandardId> for StandardId {
 
 /// 29-bit extended identifier.
 pub struct ExtendedId {
-    pub priority: u8,
-    pub ext_data_page: bool,
-    pub data_page: bool,
-    pub pdu_format: u8,
-    pub pdu_specific: u8,
+    /// Source address
     pub source_address: u8,
+    /// Parameter group number
+    pub pgn: ParameterGroupNumber,
+    /// Message priority
+    pub priority: u8,
 }
 
 impl ExtendedId {
@@ -58,12 +63,14 @@ impl ExtendedId {
         let source_address = raw as u8;
 
         ExtendedId {
-            priority,
-            ext_data_page,
-            data_page,
-            pdu_format,
-            pdu_specific,
             source_address,
+            pgn: ParameterGroupNumber {
+                specific: pdu_specific,
+                format: pdu_format,
+                data_page: data_page,
+                extended_data_page: ext_data_page,
+            },
+            priority,
         }
     }
 
@@ -71,14 +78,11 @@ impl ExtendedId {
     pub fn to_bits(&self) -> u32 {
         assert!(self.priority < 8);
 
-        // ref: J1939-21 Table 1
-        let p = self.priority as u32;
-        let edp = self.ext_data_page as u32;
-        let dp = self.data_page as u32;
-        let pf = self.pdu_format as u32;
-        let ps = self.pdu_specific as u32;
         let sa = self.source_address as u32;
-        p << 26 | edp << 25 | dp << 24 | pf << 16 | ps << 8 | sa
+        let pgn: u32 = self.pgn.to_bits();
+        let p = self.priority as u32;
+
+        p << 26 | pgn << 8 | sa
     }
 }
 
@@ -116,10 +120,10 @@ mod tests {
         let id = ExtendedId::new(0x0CF004FE);
 
         assert_eq!(id.priority, 3);
-        assert_eq!(id.ext_data_page, false);
-        assert_eq!(id.data_page, false);
-        assert_eq!(id.pdu_format, 0xF0);
-        assert_eq!(id.pdu_specific, 0x04);
+        assert_eq!(id.pgn.extended_data_page, false);
+        assert_eq!(id.pgn.data_page, false);
+        assert_eq!(id.pgn.format, 0xF0);
+        assert_eq!(id.pgn.specific, 0x04);
         assert_eq!(id.source_address, 0xFE);
     }
 
@@ -127,23 +131,27 @@ mod tests {
     fn id_extended_to_bits() {
         // Example PGN 0xF004: Electronic Engine Controller 1
         let id = ExtendedId {
-            priority: 3,
-            ext_data_page: false,
-            data_page: false,
-            pdu_format: 0xF0,
-            pdu_specific: 0x04,
             source_address: 0xFE,
+            pgn: ParameterGroupNumber {
+                specific: 0x04,
+                format: 0xF0,
+                data_page: false,
+                extended_data_page: false,
+            },
+            priority: 3,
         };
         assert_eq!(id.to_bits(), 0x0CF004FE);
 
         // Example PGN 0xF122: DC/DC Converter 4 Control
         let id = ExtendedId {
-            priority: 6,
-            ext_data_page: false,
-            data_page: false,
-            pdu_format: 0xF1,
-            pdu_specific: 0x22,
             source_address: 0xFE,
+            pgn: ParameterGroupNumber {
+                specific: 0x22,
+                format: 0xF1,
+                data_page: false,
+                extended_data_page: false,
+            },
+            priority: 6,
         };
         assert_eq!(id.to_bits(), 0x18F122FE);
     }
