@@ -26,3 +26,20 @@ pub enum Control {
     #[default]
     NoAction = 0b11,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parameter_default() {
+        // should default to the assigned 'undefined' value
+        assert_eq!(Parameter::default() as u8, 0b11);
+    }
+
+    #[test]
+    fn control_default() {
+        // should default to the assigned 'undefined' value
+        assert_eq!(Control::default() as u8, 0b11);
+    }
+}
