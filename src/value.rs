@@ -4,7 +4,7 @@
 ///
 /// Reference: SAE J1939-71 Table 2.
 #[derive(Default, Copy, Clone)]
-pub enum ParameterValue {
+pub enum Parameter {
     Disabled = 0b00,
     Enabled = 0b01,
     Error = 0b10,
@@ -16,7 +16,7 @@ pub enum ParameterValue {
 ///
 /// Reference: SAE J1939-71 Table 2.
 #[derive(Default, Copy, Clone)]
-pub enum ControlValue {
+pub enum Control {
     /// Command to disable function (turn off).
     Disable = 0b00,
     /// Command to enable function (turn on).
