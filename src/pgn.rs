@@ -9,7 +9,7 @@ pub enum Pgn {
 
 impl Pgn {
     /// Create a new PGN.
-    /// 
+    ///
     /// This does not explicitly check the resulting variant of the PGN like
     /// `new_destination()` and `new_broadcast()`.
     pub const fn new(number: Number) -> Self {
@@ -78,7 +78,12 @@ mod tests {
 
     #[test]
     fn destination_address() {
-        let pgn = Pgn::new(0, 0, false, false);
+        let pgn = Pgn::new(Number {
+            specific: 0,
+            format: 0,
+            data_page: false,
+            extended_data_page: false,
+        });
 
         // if the format number is below 240, this should return the
         // destination address
@@ -92,7 +97,12 @@ mod tests {
 
     #[test]
     fn broadcast_group_extension() {
-        let pgn = Pgn::new(0, 0, false, false);
+        let pgn = Pgn::new(Number {
+            specific: 0,
+            format: 0,
+            data_page: false,
+            extended_data_page: false,
+        });
 
         // if the format number is below 240, this should return the
         // destination address
