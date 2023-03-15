@@ -10,9 +10,8 @@
 #![allow(dead_code)]
 
 mod identifier;
-mod pgn;
+pub mod pgn;
 mod value;
 
 pub use crate::identifier::*;
-pub use crate::pgn::*;
 pub use crate::value::*;

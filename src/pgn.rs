@@ -1,31 +1,61 @@
-//! # Protocol data unit
-//!
+//! # Parameter group number
 
-#[derive(Default, Copy, Clone)]
-pub struct ParameterGroupNumber {
+/// Parameter group number variant representation
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum Pgn {
+    Destination(Number),
+    Broadcast(Number),
+}
+
+impl Pgn {
+    /// Create a new PGN.
+    /// 
+    /// This does not explicitly check the resulting variant of the PGN like
+    /// `new_destination()` and `new_broadcast()`.
+    pub const fn new(number: Number) -> Self {
+        match number.format < 240 {
+            true => Pgn::Destination(number),
+            false => Pgn::Broadcast(number),
+        }
+    }
+
+    /// Create a new destination address PGN.
+    ///
+    /// Returns Err if the format is not below 240.
+    pub const fn new_destination(number: Number) -> Result<Self, &'static str> {
+        match number.format < 240 {
+            true => Ok(Pgn::Destination(number)),
+            false => Err("format must be below 240 for destination PGNs."),
+        }
+    }
+
+    /// Create a new broadcast PGN.
+    ///
+    /// Returns Err if the format is not above 239.
+    pub const fn new_broadcast(number: Number) -> Result<Self, &'static str> {
+        match number.format >= 240 {
+            true => Ok(Pgn::Destination(number)),
+            false => Err("format must be above 239 for broadcast PGNs."),
+        }
+    }
+
+    pub fn to_bits(self) -> u32 {
+        match self {
+            Pgn::Broadcast(v) => v.to_bits(),
+            Pgn::Destination(v) => v.to_bits(),
+        }
+    }
+}
+
+#[derive(Debug, Default, PartialEq, Eq, Copy, Clone)]
+pub struct Number {
     pub specific: u8,
     pub format: u8,
     pub data_page: bool,
     pub extended_data_page: bool,
 }
 
-impl ParameterGroupNumber {
-    pub fn destination_address(self) -> Option<u8> {
-        if self.format < 240 {
-            Some(self.specific)
-        } else {
-            None
-        }
-    }
-
-    pub fn broadcast_group_extension(self) -> Option<u8> {
-        if self.format >= 240 {
-            Some(self.specific)
-        } else {
-            None
-        }
-    }
-
+impl Number {
     pub fn to_bits(self) -> u32 {
         let s = self.specific as u32;
         let f = self.format as u32;
@@ -43,30 +73,34 @@ mod tests {
     #[test]
     fn default() {
         // default should leave no bits set
-        assert_eq!(ParameterGroupNumber::default().to_bits(), 0);
+        assert_eq!(Number::default().to_bits(), 0);
     }
 
     #[test]
     fn destination_address() {
-        let pgn = ParameterGroupNumber {
-            format: 239,
-            specific: 0x23,
-            ..Default::default()
-        };
+        let pgn = Pgn::new(0, 0, false, false);
 
         // if the format number is below 240, this should return the
         // destination address
-        assert_eq!(pgn.destination_address(), Some(0x23));
+        assert_eq!(
+            Pgn::Destination(Number {
+                ..Default::default()
+            }),
+            pgn
+        );
     }
 
     #[test]
     fn broadcast_group_extension() {
-        let pgn = ParameterGroupNumber {
-            format: 240,
-            specific: 0x78,
-            ..Default::default()
-        };
+        let pgn = Pgn::new(0, 0, false, false);
 
-        assert_eq!(pgn.broadcast_group_extension(), Some(0x78));
+        // if the format number is below 240, this should return the
+        // destination address
+        assert_eq!(
+            Pgn::Destination(Number {
+                ..Default::default()
+            }),
+            pgn
+        );
     }
 }

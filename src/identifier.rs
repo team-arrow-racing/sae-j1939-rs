@@ -1,6 +1,6 @@
 //! # Identifier types
 
-use crate::ParameterGroupNumber;
+use crate::pgn::{Number, Pgn};
 
 /// 11-bit standard identifier.
 pub struct StandardId {
@@ -46,7 +46,7 @@ pub struct ExtendedId {
     /// Source address
     pub source_address: u8,
     /// Parameter group number
-    pub pgn: ParameterGroupNumber,
+    pub pgn: Pgn,
     /// Message priority
     pub priority: u8,
 }
@@ -56,20 +56,20 @@ impl ExtendedId {
     pub fn new(raw: u32) -> Self {
         let priority = (raw >> 26) as u8;
         assert!(priority < 8);
-        let ext_data_page = ((raw >> 25) & 0b1) != 0;
+        let extended_data_page = ((raw >> 25) & 0b1) != 0;
         let data_page = ((raw >> 24) & 0b1) != 0;
-        let pdu_format = (raw >> 16) as u8;
-        let pdu_specific = (raw >> 8) as u8;
+        let format = (raw >> 16) as u8;
+        let specific = (raw >> 8) as u8;
         let source_address = raw as u8;
 
         ExtendedId {
             source_address,
-            pgn: ParameterGroupNumber {
-                specific: pdu_specific,
-                format: pdu_format,
-                data_page: data_page,
-                extended_data_page: ext_data_page,
-            },
+            pgn: Pgn::new(Number {
+                specific,
+                format,
+                data_page,
+                extended_data_page,
+            }),
             priority,
         }
     }
@@ -120,10 +120,17 @@ mod tests {
         let id = ExtendedId::new(0x0CF004FE);
 
         assert_eq!(id.priority, 3);
-        assert_eq!(id.pgn.extended_data_page, false);
-        assert_eq!(id.pgn.data_page, false);
-        assert_eq!(id.pgn.format, 0xF0);
-        assert_eq!(id.pgn.specific, 0x04);
+
+        assert_eq!(
+            Pgn::Broadcast(Number {
+                specific: 0x04,
+                format: 0xF0,
+                data_page: false,
+                extended_data_page: false,
+            }),
+            id.pgn
+        );
+
         assert_eq!(id.source_address, 0xFE);
     }
 
@@ -132,12 +139,11 @@ mod tests {
         // Example PGN 0xF004: Electronic Engine Controller 1
         let id = ExtendedId {
             source_address: 0xFE,
-            pgn: ParameterGroupNumber {
+            pgn: Pgn::new(Number {
                 specific: 0x04,
                 format: 0xF0,
-                data_page: false,
-                extended_data_page: false,
-            },
+                ..Default::default()
+            }),
             priority: 3,
         };
         assert_eq!(id.to_bits(), 0x0CF004FE);
@@ -145,12 +151,11 @@ mod tests {
         // Example PGN 0xF122: DC/DC Converter 4 Control
         let id = ExtendedId {
             source_address: 0xFE,
-            pgn: ParameterGroupNumber {
+            pgn: Pgn::new(Number {
                 specific: 0x22,
                 format: 0xF1,
-                data_page: false,
-                extended_data_page: false,
-            },
+                ..Default::default()
+        }),
             priority: 6,
         };
         assert_eq!(id.to_bits(), 0x18F122FE);
