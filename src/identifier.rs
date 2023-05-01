@@ -155,7 +155,7 @@ mod tests {
                 specific: 0x22,
                 format: 0xF1,
                 ..Default::default()
-        }),
+            }),
             priority: 6,
         };
         assert_eq!(id.to_bits(), 0x18F122FE);

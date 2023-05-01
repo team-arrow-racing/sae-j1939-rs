@@ -284,7 +284,7 @@ mod tests {
         // error value should not be assertive
         let param = Parameter::Error;
         assert!(!param.is_assertive());
-        
+
         // disabled value should be assertive
         let param = Parameter::Disabled;
         assert!(param.is_assertive());
