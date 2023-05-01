@@ -177,7 +177,7 @@ impl Signal32 {
 /// Transmitted values for discrete parameters (i.e. measured).
 ///
 /// Reference: SAE J1939-71 Table 2.
-#[derive(Default, Copy, Clone)]
+#[derive(Default, Copy, Clone, PartialEq)]
 pub enum Parameter {
     Disabled = 0b00,
     Enabled = 0b01,
@@ -186,10 +186,42 @@ pub enum Parameter {
     NotAvailable = 0b11,
 }
 
+impl Parameter {
+    /// True of the parameter represents an assertive state (enabled or disabled).
+    #[inline]
+    pub fn is_assertive(self) -> bool {
+        self == Parameter::Enabled || self == Parameter::Disabled
+    }
+
+    /// True if the value is enabled
+    #[inline]
+    pub fn is_enabled(self) -> bool {
+        self == Parameter::Enabled
+    }
+
+    /// True if the value is disable
+    #[inline]
+    pub fn is_disabled(self) -> bool {
+        self == Parameter::Disabled
+    }
+
+    /// True if the parameter has the error value
+    #[inline]
+    pub fn is_error(self) -> bool {
+        self == Parameter::Error
+    }
+
+    /// True if the parameter has the error value
+    #[inline]
+    pub fn is_not_available(self) -> bool {
+        self == Parameter::NotAvailable
+    }
+}
+
 /// Transmitted values for control commands (i.e. status).
 ///
 /// Reference: SAE J1939-71 Table 2.
-#[derive(Default, Copy, Clone)]
+#[derive(Default, Copy, Clone, PartialEq)]
 pub enum Control {
     /// Command to disable function (turn off).
     Disable = 0b00,
@@ -199,6 +231,32 @@ pub enum Control {
     /// Take no action (leave as is).
     #[default]
     NoAction = 0b11,
+}
+
+impl Control {
+    /// True of the parameter represents an assertive state (enabled or disabled).
+    #[inline]
+    pub fn is_assertive(self) -> bool {
+        self == Control::Enable || self == Control::Disable
+    }
+
+    /// True if the value is enable
+    #[inline]
+    pub fn is_enable(self) -> bool {
+        self == Control::Enable
+    }
+
+    /// True if the value is disable
+    #[inline]
+    pub fn is_disable(self) -> bool {
+        self == Control::Disable
+    }
+
+    /// True if the value is no action
+    #[inline]
+    pub fn is_no_action(self) -> bool {
+        self == Control::NoAction
+    }
 }
 
 #[cfg(test)]
@@ -218,8 +276,91 @@ mod tests {
     }
 
     #[test]
+    fn parameter_is_assertive() {
+        // default value should not be assertive
+        let param = Parameter::default();
+        assert!(!param.is_assertive());
+
+        // error value should not be assertive
+        let param = Parameter::Error;
+        assert!(!param.is_assertive());
+        
+        // disabled value should be assertive
+        let param = Parameter::Disabled;
+        assert!(param.is_assertive());
+
+        // enabled value should be assertive
+        let param = Parameter::Enabled;
+        assert!(param.is_assertive());
+    }
+
+    #[test]
+    fn parameter_is_enabled() {
+        // enabled value should be true
+        let param = Parameter::Enabled;
+        assert!(param.is_enabled());
+    }
+
+    #[test]
+    fn parameter_is_disabled() {
+        // disabled value should be true
+        let param = Parameter::Disabled;
+        assert!(param.is_disabled());
+    }
+
+    #[test]
+    fn parameter_is_error() {
+        // error value should be true
+        let param = Parameter::Error;
+        assert!(param.is_error());
+    }
+
+    #[test]
+    fn parameter_is_not_available() {
+        // not available value should be true
+        let param = Parameter::NotAvailable;
+        assert!(param.is_not_available());
+    }
+
+    #[test]
     fn control_default() {
         // should default to the assigned 'undefined' value
         assert_eq!(Control::default() as u8, 0b11);
+    }
+
+    #[test]
+    fn control_is_assertive() {
+        // default value should not be assertive
+        let ctrl = Control::default();
+        assert!(!ctrl.is_assertive());
+
+        // enable value should be assertive
+        let ctrl = Control::Enable;
+        assert!(ctrl.is_assertive());
+
+        // disabled value should be assertive
+        let ctrl = Control::Disable;
+        assert!(ctrl.is_assertive());
+    }
+
+    #[test]
+    fn control_is_enable() {
+        // enable value should be true
+        let param = Control::Enable;
+        assert!(param.is_enable());
+    }
+
+    #[test]
+    fn control_is_disable() {
+        // disable value should be true
+        let param = Control::Disable;
+        assert!(param.is_disable());
+    }
+
+    #[test]
+    fn control_is_no_action() {
+        // no action value should be true
+        let param = Control::NoAction;
+        assert!(param.is_no_action());
     }
 }
